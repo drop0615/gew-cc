@@ -1,0 +1,112 @@
+<Window x:Class="GewCoordinator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Godius Eternal War キャラクターコーディネート" Width="1000" Height="760" MinWidth="740" MinHeight="580"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="390"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Grid.Column="0" Margin="10">
+            <StackPanel DockPanel.Dock="Top">
+                <TextBlock Text="クライアントフォルダ (Char と Data を含む)" Margin="0,0,0,4"/>
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="参照..." Padding="10,2" Margin="6,0,0,0" Click="Browse_Click"/>
+                    <TextBox x:Name="RootBox" VerticalContentAlignment="Center" Padding="2,3" KeyDown="RootBox_KeyDown"/>
+                </DockPanel>
+                <TextBlock x:Name="StatusText" Margin="0,4,0,0" Foreground="Gray" TextWrapping="Wrap"/>
+                <Separator Margin="0,10"/>
+                <DockPanel Margin="0,0,0,8">
+                    <TextBlock Text="性別" Width="64" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="SexBox" SelectedIndex="0" SelectionChanged="Sex_Changed"
+                              ToolTip="種類番号の先頭桁 (0 = 男性 / 1 = 女性) で絞り込みます">
+                        <ComboBoxItem Content="男性 (種類 0xx)"/>
+                        <ComboBoxItem Content="女性 (種類 1xx)"/>
+                        <ComboBoxItem Content="すべて"/>
+                    </ComboBox>
+                </DockPanel>
+                <CheckBox x:Name="AutoOrderBox" IsChecked="True" Margin="0,0,0,8" Click="AutoOrder_Click"
+                          Content="武器・盾の前後を性別で自動調整"
+                          ToolTip="男性: 盾が前・武器が奥 / 女性: 盾が奥・武器が前。オフにすると「奥」を手動で指定できます"/>
+                <TextBlock Text="パーツ (種類は直接入力できます。カラーは右の欄)" Margin="0,0,0,2" Foreground="Gray"/>
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                <UniformGrid Columns="2" Margin="0,0,0,6">
+                    <Button Content="ランダム" Padding="8,4" Margin="0,0,3,0" Click="Random_Click"/>
+                    <Button Content="すべて外す" Padding="8,4" Margin="3,0,0,0" Click="Clear_Click"/>
+                </UniformGrid>
+                <UniformGrid Columns="2" Margin="0,0,0,6">
+                    <Button Content="コーディネート保存..." Padding="8,4" Margin="0,0,3,0" Click="SavePreset_Click"/>
+                    <Button Content="読み込み..." Padding="8,4" Margin="3,0,0,0" Click="LoadPreset_Click"/>
+                </UniformGrid>
+                <Button Content="現在のコマを PNG 保存..." Padding="8,4" Margin="0,0,0,6" Click="SaveFrame_Click"/>
+                <Button Content="全コマをシート PNG 保存..." Padding="8,4" Click="SaveSheet_Click"/>
+            </StackPanel>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <StackPanel x:Name="PartsPanel"/>
+                    <Separator Margin="0,10"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="ポーズ" VerticalAlignment="Center" Margin="0,3"/>
+                        <ComboBox x:Name="PoseBox" Grid.Row="0" Grid.Column="1" Margin="0,3" SelectionChanged="Pose_Changed"/>
+
+                        <TextBlock Grid.Row="1" Text="向き" VerticalAlignment="Center" Margin="0,3"/>
+                        <DockPanel Grid.Row="1" Grid.Column="1" Margin="0,3">
+                            <CheckBox x:Name="MirrorBox" DockPanel.Dock="Right" Content="左右反転" Margin="8,0,0,0"
+                                      VerticalAlignment="Center" Click="Mirror_Click"/>
+                            <ComboBox x:Name="DirectionBox" SelectionChanged="Direction_Changed"/>
+                        </DockPanel>
+
+                        <TextBlock Grid.Row="2" Text="アニメ" VerticalAlignment="Center" Margin="0,3"/>
+                        <DockPanel Grid.Row="2" Grid.Column="1" Margin="0,3">
+                            <TextBlock x:Name="FrameLabel" DockPanel.Dock="Right" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                            <Slider x:Name="FrameSlider" Minimum="0" Maximum="2" TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Frame_Changed"/>
+                        </DockPanel>
+
+                        <CheckBox x:Name="PlayBox" Grid.Row="3" Grid.Column="1" Content="アニメーション再生" Margin="0,3"
+                                  Checked="Play_Changed" Unchecked="Play_Changed"/>
+
+                        <TextBlock Grid.Row="4" Text="倍率" VerticalAlignment="Center" Margin="0,3"/>
+                        <DockPanel Grid.Row="4" Grid.Column="1" Margin="0,3">
+                            <TextBlock x:Name="ZoomLabel" DockPanel.Dock="Right" Width="40" TextAlignment="Right" VerticalAlignment="Center"/>
+                            <Slider x:Name="ZoomSlider" Minimum="1" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Zoom_Changed"/>
+                        </DockPanel>
+                    </Grid>
+                    <ComboBox x:Name="BackgroundBox" Margin="0,6,0,0" SelectedIndex="0" SelectionChanged="Background_Changed">
+                        <ComboBoxItem Content="背景: ダークグレー"/>
+                        <ComboBoxItem Content="背景: 白"/>
+                        <ComboBoxItem Content="背景: 緑 (クロマキー)"/>
+                    </ComboBox>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+
+        <DockPanel Grid.Column="1">
+            <TextBlock x:Name="InfoText" DockPanel.Dock="Bottom" Padding="10,6" Foreground="#DDDDDD"
+                       Background="#2A2A32" TextWrapping="Wrap"/>
+            <Border x:Name="Stage" Background="#3C3C46">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Image x:Name="Preview" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                </ScrollViewer>
+            </Border>
+        </DockPanel>
+    </Grid>
+</Window>

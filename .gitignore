@@ -1,0 +1,11 @@
+# 既定ですべて無視し、公開するものだけ許可する (ゲーム由来のデータを誤って含めないため)
+*
+!.gitignore
+!README.md
+!GewCoordinator/
+!GewCoordinator/**
+!tools/
+!tools/spr.py
+
+GewCoordinator/bin/
+GewCoordinator/obj/
